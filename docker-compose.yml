@@ -1,0 +1,58 @@
+services:
+  oracle-db:
+    image: ${DB_IMAGE}
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 3072M   # Set memory limit
+#        reservations:
+#          memory: 3072M   # Soft memory limit (optional)
+    container_name: ${DB_CONTAINER_NAME}
+    environment:
+      - ORACLE_PASSWORD=oracle
+    volumes:
+      - ./src/test/resources/scripts/init.sql:/docker-entrypoint-initdb.d/00_init.sql
+      - ./src/test/resources/scripts/data.sql:/docker-entrypoint-initdb.d/01_data.sql
+    ports:
+      - "${DB_PORT:-1521}:1521"
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/oracle/healthcheck.sh" ]
+      interval: 5s
+      timeout: 5s
+      retries: 100
+      start_period: 10s
+
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=DqrBTYrhyyQptuK4xXVQ!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9600:9600
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: opensearch-dashboards
+    environment:
+      - OPENSEARCH_HOSTS=https://opensearch:9200
+      - OPENSEARCH_USERNAME=admin
+      - OPENSEARCH_PASSWORD=DqrBTYrhyyQptuK4xXVQ!
+      - OPENSEARCH_IGNORE_CERTIFICATE_ERRORS=true
+    ports:
+      - 5601:5601
+    depends_on:
+      - opensearch
+
+volumes:
+  opensearch-data:
