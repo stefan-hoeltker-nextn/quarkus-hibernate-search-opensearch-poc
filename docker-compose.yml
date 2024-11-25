@@ -22,7 +22,6 @@ services:
       timeout: 5s
       retries: 100
       start_period: 10s
-
   opensearch:
     image: opensearchproject/opensearch:latest
     container_name: opensearch
@@ -31,6 +30,8 @@ services:
       - bootstrap.memory_lock=true
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=DqrBTYrhyyQptuK4xXVQ!
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true"
     ulimits:
       memlock:
         soft: -1
@@ -45,10 +46,11 @@ services:
     image: opensearchproject/opensearch-dashboards:latest
     container_name: opensearch-dashboards
     environment:
-      - OPENSEARCH_HOSTS=https://opensearch:9200
+      - OPENSEARCH_HOSTS=http://opensearch:9200
       - OPENSEARCH_USERNAME=admin
       - OPENSEARCH_PASSWORD=DqrBTYrhyyQptuK4xXVQ!
       - OPENSEARCH_IGNORE_CERTIFICATE_ERRORS=true
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"
     ports:
       - 5601:5601
     depends_on:

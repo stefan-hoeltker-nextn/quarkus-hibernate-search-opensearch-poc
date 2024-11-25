@@ -15,7 +15,7 @@ public class AnalysisConfigurer
   public void configure(ElasticsearchAnalysisConfigurationContext context)
   {
 
-    context.analyzer("english").custom()
+    context.analyzer("german").custom()
             .tokenizer("standard")
             .tokenFilters("asciifolding", "lowercase", "porter_stem");
   }

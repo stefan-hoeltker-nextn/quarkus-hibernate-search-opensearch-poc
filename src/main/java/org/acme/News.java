@@ -40,7 +40,7 @@ public class News implements Serializable
   @Basic(optional = false)
   
   @Nationalized
-  @Column(name = "CONTENT", nullable = false)
+  @Column(name = "CONTENT", nullable = false, columnDefinition = "NCLOB")
   private String content;
   @Column(name = "VEROEFFENTLICHTDATE", nullable = true)
   private LocalDateTime veroeffentlichtdate;

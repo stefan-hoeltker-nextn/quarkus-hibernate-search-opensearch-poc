@@ -44,7 +44,7 @@ public class NewsResource
                     pattern == null || pattern.trim().isEmpty() ?
                             f.matchAll() :
                             f.simpleQueryString()
-                                    .fields("books.title").matching(pattern)
+                                    .fields("titel").matching(pattern)
             )
             .fetchHits(size.orElse(20));
   }
